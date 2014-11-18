@@ -3,6 +3,7 @@
 **********************************/
 
 #include <iostream>
+#include <random>
 
 #include "libnested.h"
 #include "models.h"
@@ -17,6 +18,28 @@ class DataSet {
         void dumpData();
         vector<double> t, y;
         int length;
+
+};
+
+class Parameter {
+public:
+    Parameter(string name, double lower_bound, double upper_bound);
+    string name;
+    double current_value;
+    double lower_bound;
+    double upper_bound;
+};
+
+Parameter::Parameter(string in_name, double in_lower_bound, double in_upper_bound) 
+{
+    /* FIXME - better way to do this */
+
+    name = in_name;
+    lower_bound = in_lower_bound;
+    upper_bound = in_upper_bound;
+}
+
+class Explorer {
 
 };
 
@@ -40,19 +63,27 @@ DataSet::DataSet(string filename)
 void DataSet::dumpData()
 {
     cout << "t" << "\t" << "y" << endl;
-    
+
     for(int i=0; i<length; i++) {
         cout << t[i] << "\t" << y[i] << endl;
     }
 }
 
-int main(int argc, char *argv[])
+double randUniformDouble(double lowerBound, double upperBound) {
+    /* Generate a double uniformly distributed in the range (lowerBound, upperBound) */
+
+    default_random_engine generator;
+    uniform_real_distribution<double> distribution(lowerBound, upperBound);
+
+    return distribution(generator);
+}
+//double transformParams
+
+void testStuff()
 {
-
-
     DataSet mydata("data/B092_1.csv");
 
-    mydata.dumpData();
+    //mydata.dumpData();
 
     vector<double> data(5);
     data = {0.1, 0.2, 0.3, 0.4, 0.5, 0.5};
@@ -60,7 +91,30 @@ int main(int argc, char *argv[])
     vector<double> params(3);
     params = {1, 100, 1};
 
-    logisticModel(data, params);
+    vector<double> results = logisticModel(mydata.t, params);
 
+    copy(results.begin(), results.end(), ostream_iterator<double>(cout, "\n"));
+
+}
+
+void testRand()
+{
+    double rU = randUniformDouble(0.5, 3.5);
+
+    cout << "rU: " << rU << endl;
+}
+
+void testParams()
+{
+    Parameter p1("param1", 1.5, 6.5);
+    p1.current_value = 3;
+
+    cout << p1.upper_bound << endl;
+}
+
+int main(int argc, char *argv[])
+{
+    testParams();
+    //testRand();
     return 0;
 }
