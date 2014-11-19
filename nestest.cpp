@@ -12,6 +12,9 @@
 
 using namespace std;
 
+
+typedef vector<double> pvector;
+
 class DataSet {
     public:
         DataSet(string filename);
@@ -104,6 +107,29 @@ void testRand()
     cout << "rU: " << rU << endl;
 }
 
+double llFunc(
+    vector<double> (modelFunc)(const vector<double>& t, const vector<double>& params), 
+    DataSet mydata,
+    const vector<double>& params)
+{
+
+    vector<double> results = modelFunc(mydata.t, params);
+
+    double sigma = 0.1;
+
+    int n = mydata.t.size();
+
+    float rsum = 0;
+    for (int i=0; i<n; i++) {
+        rsum += pow((results[i] - mydata.y[i]) / sigma, 2);
+    }
+
+    float llhood = log(1 / M_PI);
+    //copy(results.begin(), results.end(), ostream_iterator<double>(cout, "\n"));
+
+    return llhood;
+}
+
 void testParams()
 {
     Parameter p1("param1", 1.5, 6.5);
@@ -112,9 +138,34 @@ void testParams()
     cout << p1.upper_bound << endl;
 }
 
+void explorer(
+    pvector params, 
+    vector<double> (modelFunc)(const vector<double>& t, const vector<double>& params), 
+    double llMax)
+{
+
+    cout << "Dora!" << endl;
+}
+
+void testll()
+{
+    DataSet mydata("data/B092_1.csv");
+
+    vector<double> params(3);
+    params = {1, 100, 1};
+
+
+    double ll = llFunc(logisticModel, mydata, params);
+
+    cout << "Ll: " << ll << endl;
+
+    explorer(params, logisticModel, ll);
+
+}
 int main(int argc, char *argv[])
 {
-    testParams();
+    //testParams();
     //testRand();
+    testll();
     return 0;
 }
