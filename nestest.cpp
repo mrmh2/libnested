@@ -210,7 +210,12 @@ void explorer(
 
     cout << pi.value << endl;
 
-    for (int i=0; i<10; i++) {
+    int accepted, rejected;
+
+    accepted = 0;
+    rejected = 0;
+
+    for (int i=0; i<20; i++) {
         pi.makeStep();
  //       cout << pi.value << endl;
         params[0] = pi.value;
@@ -218,6 +223,12 @@ void explorer(
         double newLL = llFunc(modelFunc, data, params);
 
         int accept = newLL > minLL;
+
+        if (accept) {
+            accepted++;
+        } else {
+            rejected++;
+        }
 
         cout << "oldLL: " << minLL << " newLL: " << newLL << " " << accept << endl;
     }
