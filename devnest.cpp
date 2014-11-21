@@ -8,8 +8,7 @@
 
 #include "libnested.h"
 #include "models.h"
-
-#include "csv.h"
+#include "dataset.h"
 
 using namespace std;
 
@@ -45,14 +44,6 @@ RandProvider *masterRand;
 
 typedef vector<double> pvector;
 
-class DataSet {
-    public:
-        DataSet(string filename);
-        void dumpData();
-        vector<double> t, y;
-        int length;
-
-};
 
 class Parameter {
 public:
@@ -70,7 +61,9 @@ public:
     void makeStep();
     double value;
     double step_size;
-  double transform();
+    double lower_bound;
+    double upper_bound;
+    double transform();
 };
 
 Pinfer::Pinfer(double initial_val, double start_step)
@@ -87,14 +80,31 @@ Pinfer::Pinfer()
 
 double Pinfer::transform()
 {
-  return 0;
+    return uniformPrior(value, lower_bound, upper_bound);
 }
 
 class ParamSet
 {
 public:
-  vector<Pinfer> pinfers;
+    ParamSet(int n_params, string filename);
+    vector<Pinfer> pinfers;
+    DataSet *data;
 };
+
+ParamSet::ParamSet(int n_params, string filename)
+{
+    //pinfers.push_back(new Pinfer(0.5, 0.1));
+    //pinfers = new vector<Pinfer>;
+    pinfers.reserve(n_params);
+
+    for (int i=0; i<n_params; i++) {
+        pinfers[i].value = 0.5;
+        pinfers[i].step_size = 0.1;
+    }
+
+    data = new DataSet(filename);
+
+}
 
 void Pinfer::makeStep()
 {
@@ -128,35 +138,7 @@ class Explorer {
 
 };
 
-DataSet::DataSet(string filename)
-{
-    io::CSVReader<2> in(filename);
 
-    try {
-    in.read_header(io::ignore_no_column, "t", "y");
-
-    double t_in, y_in;
-
-    while(in.read_row(t_in, y_in)) {
-        t.push_back(t_in);
-        y.push_back(y_in);
-    }
-
-    length = t.size();
-    } catch(exception const& e) {
-      cout << "Error loading data: " << e.what() << endl;
-    }
-
-}
-
-void DataSet::dumpData()
-{
-    cout << "t" << "\t" << "y" << endl;
-
-    for(int i=0; i<length; i++) {
-        cout << t[i] << "\t" << y[i] << endl;
-    }
-}
 
 
 //double transformParams
@@ -219,7 +201,7 @@ void testParams()
 }
 
 void explorer(
-    ParamSet pset,
+//    ParamSet pset,
     vector<double> (modelFunc)(const vector<double>& t, const vector<double>& params), 
     double minLL,
     DataSet data)
@@ -261,7 +243,9 @@ void testll()
   // DataSet mydata("data/B092_1.csv");
   DataSet ftdata("data/ftdata.csv");
 
-    vector<double> params(2);
+  //ParamSet ps(3);
+
+      vector<double> params(2);
     params = {0.5, 0.5};
 
     double ll = llFunc(logisticModel, ftdata, params);
@@ -288,13 +272,20 @@ void testexplorer()
 
 }
 
+void testpset()
+{
+
+  ParamSet ps(2, "data/ftdata.csv");
+
+}
+
 int main(int argc, char *argv[])
 {
     //testParams();
     //testRand();
 
     masterRand = new RandProvider();
-    testll();
+    testpset();
 
     //    testexplorer();
  
