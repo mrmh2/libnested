@@ -3,6 +3,7 @@
 **********************************/
 
 #include <iostream>
+#include <iterator>
 #include <random>
 
 #include "libnested.h"
@@ -143,8 +144,10 @@ void explorer(
     vector<double> (modelFunc)(const vector<double>& t, const vector<double>& params), 
     double llMax)
 {
-
+  double stepsize;
     cout << "Dora!" << endl;
+
+    cout << params[0] << endl;
 }
 
 void testll()
