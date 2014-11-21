@@ -26,6 +26,22 @@ vector<double> logisticModel(const vector<double>& t, const vector<double>& para
     return model_out;
 }
 
+vector<double> linearModel(const vector<double>& t, const vector<double>& params)
+{
+    int n = t.size();
+
+    vector<double> model_out(n);
+
+    double m = params[0];
+    double c = params[1];
+
+    for (int i=0; i<n; i++) {
+        model_out[i] = m * t[i] + c;
+    }
+
+    return model_out;
+}
+
 vector<double> Bar4Par(const vector<double>& t, const vector<double>& params) {
     double par1 = params[0];
     double par2 = params[1];

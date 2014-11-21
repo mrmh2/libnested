@@ -261,6 +261,7 @@ int main(int argc, char *argv[])
     //testRand();
 
     masterRand = new RandProvider();
-    testll();
+    //testll();
+    DataSet ftdata("data/ftdata.csv");
     return 0;
 }
