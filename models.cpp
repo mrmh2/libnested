@@ -65,3 +65,8 @@ vector<double> Bar4Par(const vector<double>& t, const vector<double>& params) {
 
     return model_out;
 }
+
+double uniformPrior(double u, double lower_bound, double upper_bound)
+{
+  return lower_bound + u * (upper_bound - lower_bound);
+}

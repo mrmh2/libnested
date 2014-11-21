@@ -70,6 +70,7 @@ public:
     void makeStep();
     double value;
     double step_size;
+  double transform();
 };
 
 Pinfer::Pinfer(double initial_val, double start_step)
@@ -82,6 +83,11 @@ Pinfer::Pinfer()
 {
     value = 0.5;
     step_size = 0.1;
+}
+
+double Pinfer::transform()
+{
+  return 0;
 }
 
 class ParamSet
@@ -180,11 +186,13 @@ void testRand()
     cout << "rU: " << rU << endl;
 }
 
+
 double llFunc(
     vector<double> (modelFunc)(const vector<double>& t, const vector<double>& params), 
     DataSet mydata,
     const vector<double>& params)
 {
+  vector<double> mParams(params.size());
 
     vector<double> results = modelFunc(mydata.t, params);
 
@@ -250,13 +258,13 @@ void explorer(
 
 void testll()
 {
-    DataSet mydata("data/B092_1.csv");
+  // DataSet mydata("data/B092_1.csv");
+  DataSet ftdata("data/ftdata.csv");
 
-    vector<double> params(3);
-    params = {0.5, 0.5, 0.5};
+    vector<double> params(2);
+    params = {0.5, 0.5};
 
-
-    double ll = llFunc(logisticModel, mydata, params);
+    double ll = llFunc(logisticModel, ftdata, params);
 
     cout << "Ll: " << ll << endl;
 
@@ -286,9 +294,9 @@ int main(int argc, char *argv[])
     //testRand();
 
     masterRand = new RandProvider();
-    //testll();
+    testll();
 
-    testexplorer();
+    //    testexplorer();
  
     return 0;
 }

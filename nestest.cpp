@@ -17,3 +17,9 @@ TEST_CASE( "Linear model correct", "[Linear model]") {
 
   REQUIRE( results == expected_results );
 }
+
+TEST_CASE( "Uniform prior correct", "[Uniform prior]") {
+  double r = uniformPrior(1.5, 0, 2);
+
+  REQUIRE( r == 3 );
+}
