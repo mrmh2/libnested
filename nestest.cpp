@@ -13,6 +13,35 @@
 
 using namespace std;
 
+class RandProvider
+{
+public:
+    RandProvider();
+    double randUniformDouble(double lowerBound, double upperBound);
+    default_random_engine generator;    
+    uniform_real_distribution<double> *distribution;//(lowerBound, upperBound);
+};
+
+// default_random_engine generator;
+
+// void initRandom(double lowerBound, double upperBound)
+// {
+//     uniform_real_distribution<double> distribution(lowerBound, upperBound);
+
+// }
+
+RandProvider::RandProvider() {
+    cout << "Hmmit" << endl;
+    distribution = new uniform_real_distribution<double>(-1, 1);
+//    distribution =
+}
+
+double RandProvider::randUniformDouble(double lowerBound, double upperBound) {
+    /* Generate a double uniformly distributed in the range (lowerBound, upperBound) */
+    return (*distribution)(generator);
+}
+
+RandProvider *masterRand;
 
 typedef vector<double> pvector;
 
@@ -33,6 +62,46 @@ public:
     double lower_bound;
     double upper_bound;
 };
+
+class Pinfer {
+public:
+    Pinfer(double initial_val, double start_step);
+    Pinfer();
+    void makeStep();
+    double value;
+    double step_size;
+};
+
+Pinfer::Pinfer(double initial_val, double start_step)
+{
+    value = initial_val;
+    step_size  = start_step;
+}
+
+Pinfer::Pinfer()
+{
+    value = 0.5;
+    step_size = 0.1;
+}
+
+void Pinfer::makeStep()
+{
+    /* Make a step in parameter space. If we go outside the unit hypercube,
+    instead replace parameter by value between 0 and 1 */
+
+    double rU = masterRand->randUniformDouble(-1, 1);
+
+    //cout << rU << endl;
+
+    double attempt = value + rU * step_size;
+
+    if (attempt < 0 || attempt > 1) {
+        // FIXME - proper random
+        value = 0.5 * (1 + masterRand->randUniformDouble(0, 1));
+    } else {
+        value = attempt;
+    }
+}
 
 Parameter::Parameter(string in_name, double in_lower_bound, double in_upper_bound) 
 {
@@ -73,14 +142,7 @@ void DataSet::dumpData()
     }
 }
 
-double randUniformDouble(double lowerBound, double upperBound) {
-    /* Generate a double uniformly distributed in the range (lowerBound, upperBound) */
 
-    default_random_engine generator;
-    uniform_real_distribution<double> distribution(lowerBound, upperBound);
-
-    return distribution(generator);
-}
 //double transformParams
 
 void testStuff()
@@ -103,7 +165,7 @@ void testStuff()
 
 void testRand()
 {
-    double rU = randUniformDouble(0.5, 3.5);
+    double rU = masterRand->randUniformDouble(0.5, 3.5);
 
     cout << "rU: " << rU << endl;
 }
@@ -116,7 +178,7 @@ double llFunc(
 
     vector<double> results = modelFunc(mydata.t, params);
 
-    double sigma = 0.1;
+    double sigma = 1;
 
     int n = mydata.t.size();
 
@@ -125,8 +187,7 @@ double llFunc(
         rsum += pow((results[i] - mydata.y[i]) / sigma, 2);
     }
 
-    float llhood = log(1 / M_PI);
-    //copy(results.begin(), results.end(), ostream_iterator<double>(cout, "\n"));
+    float llhood = log(rsum / M_PI);
 
     return llhood;
 }
@@ -142,12 +203,39 @@ void testParams()
 void explorer(
     pvector params, 
     vector<double> (modelFunc)(const vector<double>& t, const vector<double>& params), 
-    double llMax)
+    double minLL,
+    DataSet data)
 {
-  double stepsize;
-    cout << "Dora!" << endl;
 
-    cout << params[0] << endl;
+    Pinfer pi = Pinfer(0.5, 0.1);
+
+    cout << pi.value << endl;
+
+    int accepted, rejected;
+
+    accepted = 0;
+    rejected = 0;
+
+    for (int i=0; i<20; i++) {
+        pi.makeStep();
+ //       cout << pi.value << endl;
+        params[0] = pi.value;
+
+        double newLL = llFunc(modelFunc, data, params);
+
+        int accept = newLL > minLL;
+
+        if (accept) {
+            accepted++;
+        } else {
+            rejected++;
+        }
+
+        cout << "oldLL: " << minLL << " newLL: " << newLL << " " << accept << endl;
+    }
+
+    //cout << "Candidate: " << candidate << endl;
+
 }
 
 void testll()
@@ -155,20 +243,24 @@ void testll()
     DataSet mydata("data/B092_1.csv");
 
     vector<double> params(3);
-    params = {1, 100, 1};
+    params = {0.5, 0.5, 0.5};
 
 
     double ll = llFunc(logisticModel, mydata, params);
 
     cout << "Ll: " << ll << endl;
 
-    explorer(params, logisticModel, ll);
+    vector<Pinfer> pis(3);
+    explorer(params, logisticModel, ll, mydata);
 
 }
+
 int main(int argc, char *argv[])
 {
     //testParams();
     //testRand();
+
+    masterRand = new RandProvider();
     testll();
     return 0;
 }

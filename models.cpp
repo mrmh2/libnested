@@ -8,6 +8,9 @@
 
 vector<double> logisticModel(const vector<double>& t, const vector<double>& params) {
 
+    // cout << "Running logisticModel" << endl;
+    // cout << "P: " << params[0] << endl;
+
     int n = t.size();
 
     vector<double> model_out(n);
