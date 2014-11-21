@@ -9,3 +9,4 @@ else(APPLE)
 endif()
 
 add_executable(nestest nestest.cpp models.cpp)
+add_executable(devnest devnest.cpp models.cpp)
