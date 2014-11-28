@@ -3,6 +3,7 @@
 
 #include <iterator>
 
+#include "dataset.h"
 #include "libnested.h"
 #include "models.h"
 
@@ -23,3 +24,12 @@ TEST_CASE( "Uniform prior correct", "[Uniform prior]") {
 
   REQUIRE( r == 3 );
 }
+
+TEST_CASE ( "DataSet load correct", "[DataSet]") {
+  DataSet ftdata("data/ftdata.csv");
+
+  REQUIRE ( ftdata.t[0] == 0.923884 );
+  REQUIRE ( abs(ftdata.y[3] - 0.298496) < 0.000001 );
+  REQUIRE ( ftdata.y.size() == 14 );
+}
+

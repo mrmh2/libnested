@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iterator>
 #include <random>
+#include <functional>
 
 #include "libnested.h"
 #include "models.h"
@@ -89,6 +90,7 @@ public:
     ParamSet(int n_params, string filename);
     vector<Pinfer> pinfers;
     DataSet *data;
+  //  function<void (
 };
 
 ParamSet::ParamSet(int n_params, string filename)
@@ -287,7 +289,7 @@ int main(int argc, char *argv[])
     masterRand = new RandProvider();
     testpset();
 
-    //    testexplorer();
+
  
     return 0;
 }
