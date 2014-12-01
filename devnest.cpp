@@ -77,6 +77,8 @@ Pinfer::Pinfer()
 {
     value = 0.5;
     step_size = 0.1;
+    lower_bound = 0;
+    upper_bound = 2;
 }
 
 double Pinfer::transform()
@@ -90,6 +92,7 @@ public:
     ParamSet(int n_params, string filename);
     vector<Pinfer> pinfers;
     DataSet *data;
+    void LogLikelihood();
   //  function<void (
 };
 
@@ -102,9 +105,32 @@ ParamSet::ParamSet(int n_params, string filename)
     for (int i=0; i<n_params; i++) {
         pinfers[i].value = 0.5;
         pinfers[i].step_size = 0.1;
+        pinfers[i].lower_bound = 0;
+        pinfers[i].upper_bound = 2;
     }
 
     data = new DataSet(filename);
+
+}
+
+void ParamSet::LogLikelihood()
+{
+    cout << "PLLH" << endl;
+
+    int n = data->t.size();
+
+    vector<double> params(2);
+
+    for (int i=0; i<2; i++) {
+        params[i] = pinfers[i].transform();
+    }
+
+    vector<double> results = linearModel(data->t, params);
+
+    for (int i=0; i<n; i++) {
+        cout << results[i] << endl;
+    }
+
 
 }
 
@@ -278,6 +304,7 @@ void testpset()
 {
 
   ParamSet ps(2, "data/ftdata.csv");
+  ps.LogLikelihood();
 
 }
 

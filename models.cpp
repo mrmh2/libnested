@@ -35,6 +35,8 @@ vector<double> linearModel(const vector<double>& t, const vector<double>& params
     double m = params[0];
     double c = params[1];
 
+    cout << "M = " << m << ", C = " << c << endl;
+
     for (int i=0; i<n; i++) {
         model_out[i] = m * t[i] + c;
     }
