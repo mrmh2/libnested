@@ -7,9 +7,12 @@
 #include <random>
 #include <functional>
 
+#include <math.h>
+
 #include "libnested.h"
 #include "models.h"
 #include "dataset.h"
+#include "params.h"
 
 using namespace std;
 
@@ -43,96 +46,6 @@ double RandProvider::randUniformDouble(double lowerBound, double upperBound) {
 
 RandProvider *masterRand;
 
-typedef vector<double> pvector;
-
-
-class Parameter {
-public:
-    Parameter(string name, double lower_bound, double upper_bound);
-    string name;
-    double current_value;
-    double lower_bound;
-    double upper_bound;
-};
-
-class Pinfer {
-public:
-    Pinfer(double initial_val, double start_step);
-    Pinfer();
-    void makeStep();
-    double value;
-    double step_size;
-    double lower_bound;
-    double upper_bound;
-    double transform();
-};
-
-Pinfer::Pinfer(double initial_val, double start_step)
-{
-    value = initial_val;
-    step_size  = start_step;
-}
-
-Pinfer::Pinfer()
-{
-    value = 0.5;
-    step_size = 0.1;
-    lower_bound = 0;
-    upper_bound = 2;
-}
-
-double Pinfer::transform()
-{
-    return uniformPrior(value, lower_bound, upper_bound);
-}
-
-class ParamSet
-{
-public:
-    ParamSet(int n_params, string filename);
-    vector<Pinfer> pinfers;
-    DataSet *data;
-    void LogLikelihood();
-  //  function<void (
-};
-
-ParamSet::ParamSet(int n_params, string filename)
-{
-    //pinfers.push_back(new Pinfer(0.5, 0.1));
-    //pinfers = new vector<Pinfer>;
-    pinfers.reserve(n_params);
-
-    for (int i=0; i<n_params; i++) {
-        pinfers[i].value = 0.5;
-        pinfers[i].step_size = 0.1;
-        pinfers[i].lower_bound = 0;
-        pinfers[i].upper_bound = 2;
-    }
-
-    data = new DataSet(filename);
-
-}
-
-void ParamSet::LogLikelihood()
-{
-    cout << "PLLH" << endl;
-
-    int n = data->t.size();
-
-    vector<double> params(2);
-
-    for (int i=0; i<2; i++) {
-        params[i] = pinfers[i].transform();
-    }
-
-    vector<double> results = linearModel(data->t, params);
-
-    for (int i=0; i<n; i++) {
-        cout << results[i] << endl;
-    }
-
-
-}
 
 void Pinfer::makeStep()
 {
@@ -235,9 +148,9 @@ void explorer(
     DataSet data)
 {
 
-    Pinfer pi = Pinfer(0.5, 0.1);
+  //Pinfer pi = Pinfer(0.5, 0.1);
 
-    cout << pi.value << endl;
+  //cout << pi.value << endl;
 
     int accepted, rejected;
 
@@ -304,7 +217,8 @@ void testpset()
 {
 
   ParamSet ps(2, "data/ftdata.csv");
-  ps.LogLikelihood();
+  vector<double> testparams = {0.05, 0.1};
+  cout << ps.LogLikelihood(testparams) << endl;
 
 }
 
@@ -315,8 +229,6 @@ int main(int argc, char *argv[])
 
     masterRand = new RandProvider();
     testpset();
-
-
  
     return 0;
 }
