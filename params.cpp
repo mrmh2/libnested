@@ -1,3 +1,4 @@
+#include "params.h"
 
 Pinfer::Pinfer(double initial_val, double start_step)
 {
@@ -33,6 +34,8 @@ ParamSet::ParamSet(int n_params, string filename)
     }
 
     data = new DataSet(filename);
+
+    randprov = new RandProvider(-1, 1);
 
 }
 
@@ -92,4 +95,22 @@ double ParamSet::LogLikelihood(vector<double> &uparams)
 
     return H;
   
+}
+
+double makeBoundedStep(vector<double> &iParams, vector<double> &steps)
+{
+  
+}
+
+void ParamSet::Explore(vector<double> &iParams, double llMin)
+{
+  cout << "Explore from " << llMin << endl;
+
+  for (int i=0; i<iParams.size(); i++) {
+    iParams[i] += 0.1;
+  }
+
+  cout << randprov->randUniformDouble() << endl;
+
+  cout << LogLikelihood(iParams) << endl;
 }

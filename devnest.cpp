@@ -13,36 +13,10 @@
 #include "models.h"
 #include "dataset.h"
 #include "params.h"
+#include "randprov.h"
 
 using namespace std;
 
-class RandProvider
-{
-public:
-    RandProvider();
-    double randUniformDouble(double lowerBound, double upperBound);
-    default_random_engine generator;    
-    uniform_real_distribution<double> *distribution;//(lowerBound, upperBound);
-};
-
-// default_random_engine generator;
-
-// void initRandom(double lowerBound, double upperBound)
-// {
-//     uniform_real_distribution<double> distribution(lowerBound, upperBound);
-
-// }
-
-RandProvider::RandProvider() {
-    cout << "Hmmit" << endl;
-    distribution = new uniform_real_distribution<double>(-1, 1);
-//    distribution =
-}
-
-double RandProvider::randUniformDouble(double lowerBound, double upperBound) {
-    /* Generate a double uniformly distributed in the range (lowerBound, upperBound) */
-    return (*distribution)(generator);
-}
 
 RandProvider *masterRand;
 
@@ -52,7 +26,7 @@ void Pinfer::makeStep()
     /* Make a step in parameter space. If we go outside the unit hypercube,
     instead replace parameter by value between 0 and 1 */
 
-    double rU = masterRand->randUniformDouble(-1, 1);
+  double rU = masterRand->randUniformDouble();
 
     //cout << rU << endl;
 
@@ -60,7 +34,7 @@ void Pinfer::makeStep()
 
     if (attempt < 0 || attempt > 1) {
         // FIXME - proper random
-        value = 0.5 * (1 + masterRand->randUniformDouble(0, 1));
+        value = 0.5 * (1 + masterRand->randUniformDouble());
     } else {
         value = attempt;
     }
@@ -104,7 +78,7 @@ void testStuff()
 
 void testRand()
 {
-    double rU = masterRand->randUniformDouble(0.5, 3.5);
+    double rU = masterRand->randUniformDouble();
 
     cout << "rU: " << rU << endl;
 }
@@ -217,8 +191,9 @@ void testpset()
 {
 
   ParamSet ps(2, "data/ftdata.csv");
-  vector<double> testparams = {0.05, 0.1};
-  cout << ps.LogLikelihood(testparams) << endl;
+  vector<double> testparams = {0.5, 0.5};
+  double ll = ps.LogLikelihood(testparams);
+  ps.Explore(testparams, ll);
 
 }
 
@@ -227,7 +202,7 @@ int main(int argc, char *argv[])
     //testParams();
     //testRand();
 
-    masterRand = new RandProvider();
+  masterRand = new RandProvider(-1, 1);
     testpset();
  
     return 0;

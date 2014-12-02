@@ -4,6 +4,9 @@
 
 #include "csv.h"
 
+#ifndef DATASET_H
+#define DATASET_H
+
 using namespace std;
 
 class DataSet {
@@ -14,3 +17,5 @@ class DataSet {
         int length;
 
 };
+
+#endif

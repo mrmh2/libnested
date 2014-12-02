@@ -1,4 +1,13 @@
+#include <vector>
+#include <string>
+
+#include "dataset.h"
+#include "models.h"
+#include "randprov.h"
+
 #define PI 3.1415927
+
+using namespace std;
 
 typedef vector<double> pvector;
 
@@ -29,8 +38,10 @@ public:
     ParamSet(int n_params, string filename);
     vector<Pinfer> pinfers;
     DataSet *data;
-     double LogLikelihood();
-  double LogLikelihood(vector<double> &uparams);
-  double sigma = 0.5;
+    double LogLikelihood();
+    double LogLikelihood(vector<double> &uparams);
+    double sigma = 0.5;
+    void Explore(vector<double> &uparams, double llMin);
+    RandProvider *randprov;
   //  function<void (
 };

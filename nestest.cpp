@@ -6,6 +6,7 @@
 #include "dataset.h"
 #include "libnested.h"
 #include "models.h"
+#include "params.h"
 
 #include "csv.h"
 
@@ -31,5 +32,14 @@ TEST_CASE ( "DataSet load correct", "[DataSet]") {
   REQUIRE ( ftdata.t[0] == 0.923884 );
   REQUIRE ( abs(ftdata.y[3] - 0.298496) < 0.000001 );
   REQUIRE ( ftdata.y.size() == 14 );
+}
+
+TEST_CASE ( "ParamSet basic tests", "[ParamSet]") {
+
+  ParamSet ps(2, "data/ftdata.csv");
+  vector<double> testparams = {0.05, 0.1};
+  double ll = ps.LogLikelihood(testparams);
+
+  REQUIRE ( abs(ll - -4.5515) < 0.0001 );
 }
 
