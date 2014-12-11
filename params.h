@@ -45,3 +45,9 @@ public:
     RandProvider *randprov;
   //  function<void (
 };
+
+class PGroup
+{
+  vector<double> pvals;
+  double ll;
+};

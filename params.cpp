@@ -104,13 +104,13 @@ double makeBoundedStep(vector<double> &iParams, vector<double> &steps)
 
 void ParamSet::Explore(vector<double> &iParams, double llMin)
 {
+  double randstep;
   cout << "Explore from " << llMin << endl;
 
   for (int i=0; i<iParams.size(); i++) {
-    iParams[i] += 0.1;
+     randstep = 0.1 * randprov->randUniformDouble();
+     iParams[i] += randstep;
   }
-
-  cout << randprov->randUniformDouble() << endl;
 
   cout << LogLikelihood(iParams) << endl;
 }
