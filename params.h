@@ -32,11 +32,18 @@ public:
     double transform();
 };
 
+class PGroup
+{
+  vector<double> pvals;
+  double ll;
+};
+
 class ParamSet
 {
 public:
     ParamSet(int n_params, string filename);
     vector<Pinfer> pinfers;
+    vector<PGroup> pgroups;
     DataSet *data;
     double LogLikelihood();
     double LogLikelihood(vector<double> &uparams);
@@ -46,8 +53,4 @@ public:
   //  function<void (
 };
 
-class PGroup
-{
-  vector<double> pvals;
-  double ll;
-};
+
