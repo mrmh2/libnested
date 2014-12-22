@@ -34,7 +34,9 @@ public:
 
 class PGroup
 {
+  PGroup();
   vector<double> pvals;
+  vector<Pinfer *> pinfers;
   double ll;
 };
 

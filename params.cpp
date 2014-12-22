@@ -25,6 +25,7 @@ ParamSet::ParamSet(int n_params, string filename)
     //pinfers.push_back(new Pinfer(0.5, 0.1));
     //pinfers = new vector<Pinfer>;
     pinfers.reserve(n_params);
+    pgroups.reserve(10);
 
     for (int i=0; i<n_params; i++) {
         pinfers[i].value = 0.5;
