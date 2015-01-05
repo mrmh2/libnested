@@ -190,10 +190,15 @@ void testexplorer()
 void testpset()
 {
 
-  ParamSet ps(2, "data/ftdata.csv");
+  ParamSet ps(2, "data/ftdata.csv", 10);
+
+  ps.dump();
+
   vector<double> testparams = {0.5, 0.5};
   double ll = ps.LogLikelihood(testparams);
   ps.Explore(testparams, ll);
+
+  
 
 }
 

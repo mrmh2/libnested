@@ -14,33 +14,42 @@ Pinfer::Pinfer()
     upper_bound = 2;
 }
 
-double Pinfer::transform()
+double Pinfer::transform(double val)
 {
-    return uniformPrior(value, lower_bound, upper_bound);
+    return uniformPrior(val, lower_bound, upper_bound);
 }
 
 
-ParamSet::ParamSet(int n_params, string filename)
+ParamSet::ParamSet(int in_n_params, string filename, int prior_size)
 {
+  n_params = in_n_params;
     //pinfers.push_back(new Pinfer(0.5, 0.1));
     //pinfers = new vector<Pinfer>;
     pinfers.reserve(n_params);
-    pgroups.reserve(10);
+    pgroups.reserve(prior_size);
 
     for (int i=0; i<n_params; i++) {
-        pinfers[i].value = 0.5;
-        pinfers[i].step_size = 0.1;
-        pinfers[i].lower_bound = 0;
-        pinfers[i].upper_bound = 2;
+      pinfers.push_back(Pinfer(0.5, 0.1));
+      pinfers[i].value = 0.5;
+      pinfers[i].step_size = 0.1;
+      pinfers[i].lower_bound = 0;
+      pinfers[i].upper_bound = 2;
     }
 
     data = new DataSet(filename);
 
-    randprov = new RandProvider(-1, 1);
+    randprov = new RandProvider(0, 1);
 
+    for (int i=0; i<prior_size; i++) {
+      pgroups.push_back(PGroup(n_params, randprov));
+      for (int j=0; j<n_params; j++) {
+	pgroups[i].pinfers.push_back(&pinfers[j]);
+      }
+      pgroups[i].ll = LogLikelihood(&pgroups[i]);
+    }
 }
 
-double ParamSet::LogLikelihood()
+double ParamSet::LogLikelihood(PGroup *pg)
 {
     cout << "PLLH" << endl;
 
@@ -49,7 +58,7 @@ double ParamSet::LogLikelihood()
     vector<double> params(2);
 
     for (int i=0; i<2; i++) {
-        params[i] = pinfers[i].transform();
+      params[i] = pg->pinfers[i]->transform(pg->pvals[i]);
     }
 
     vector<double> results = linearModel(data->t, params);
@@ -114,4 +123,38 @@ void ParamSet::Explore(vector<double> &iParams, double llMin)
   }
 
   cout << LogLikelihood(iParams) << endl;
+}
+
+void ParamSet::dump()
+{
+  cout << pinfers.size() << " pinfers." << endl;
+  cout << pgroups.size() << " objects." << endl;
+
+  for(int i=0; i<pgroups.size(); i++) {
+    pgroups[i].dump();
+  }
+}
+
+PGroup::PGroup(int in_n_params, RandProvider *randprov)
+{
+  n_params = in_n_params;
+
+  pvals.reserve(n_params);
+  for (int i=0; i<n_params; i++) {
+    pvals.push_back(randprov->randUniformDouble());
+  }
+  pinfers.reserve(n_params);
+}
+
+void PGroup::dump()
+{
+  cout << "In PGroup, " << n_params << " params." << endl;
+
+  for (int i=0; i<n_params; i++) {
+    cout << "  " << pvals[i];
+    cout << " (" << pinfers[i]->transform(pvals[i]) << ")";
+  }
+
+  cout << endl;
+  cout << "  ll: " << ll << endl;
 }

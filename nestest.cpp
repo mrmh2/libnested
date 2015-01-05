@@ -36,7 +36,7 @@ TEST_CASE ( "DataSet load correct", "[DataSet]") {
 
 TEST_CASE ( "ParamSet basic tests", "[ParamSet]") {
 
-  ParamSet ps(2, "data/ftdata.csv");
+  ParamSet ps(2, "data/ftdata.csv", 10);
   vector<double> testparams = {0.05, 0.1};
   double ll = ps.LogLikelihood(testparams);
 
