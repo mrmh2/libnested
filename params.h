@@ -47,10 +47,13 @@ class PGroup
 class ParamSet
 {
 public:
-  ParamSet(int in_n_params, string filename, int prior_size);
+    ParamSet(int in_n_params, string filename, int prior_size);
   
     vector<Pinfer> pinfers;
     vector<PGroup> pgroups;
+    vector<PGroup> posterior;
+
+    PGroup* find_worst();
     int n_params;
     DataSet *data;
     double LogLikelihood(PGroup *pg);

@@ -146,6 +146,11 @@ PGroup::PGroup(int in_n_params, RandProvider *randprov)
   pinfers.reserve(n_params);
 }
 
+PGroup* ParamSet::find_worst()
+{
+
+}
+
 void PGroup::dump()
 {
   cout << "In PGroup, " << n_params << " params." << endl;
