@@ -1,7 +1,6 @@
 #include "randprov.h"
 
 RandProvider::RandProvider(double lowerBound, double upperBound) {
-    cout << "Hmmit" << endl;
     distribution = new uniform_real_distribution<double>(lowerBound, upperBound);
 //    distribution =
 }

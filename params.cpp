@@ -43,7 +43,7 @@ ParamSet::ParamSet(int in_n_params, string filename, int prior_size)
     for (int i=0; i<prior_size; i++) {
       pgroups.push_back(PGroup(n_params, randprov));
       for (int j=0; j<n_params; j++) {
-	pgroups[i].pinfers.push_back(&pinfers[j]);
+	       pgroups[i].pinfers.push_back(&pinfers[j]);
       }
       pgroups[i].ll = LogLikelihood(&pgroups[i]);
     }
@@ -51,7 +51,7 @@ ParamSet::ParamSet(int in_n_params, string filename, int prior_size)
 
 double ParamSet::LogLikelihood(PGroup *pg)
 {
-    cout << "PLLH" << endl;
+//    cout << "PLLH" << endl;
 
     int n = data->t.size();
 
@@ -65,8 +65,8 @@ double ParamSet::LogLikelihood(PGroup *pg)
 
     double sum_sq_diff = 0;
     for (int i=0; i<n; i++) {
-        cout << results[i] << endl;
-	sum_sq_diff += (results[i] - data->y[i]) * (results[i] - data->y[i]);
+//        cout << results[i] << endl;
+	   sum_sq_diff += (results[i] - data->y[i]) * (results[i] - data->y[i]);
     }
 
 
@@ -91,7 +91,7 @@ double ParamSet::LogLikelihood(vector<double> &uparams)
     double sum_sq_diff = 0;
     for (int i=0; i<n; i++) {
       //cout << results[i] << endl;
-	sum_sq_diff += (results[i] - data->y[i]) * (results[i] - data->y[i]);
+	   sum_sq_diff += (results[i] - data->y[i]) * (results[i] - data->y[i]);
     }
 
     //cout << "ssd: " << sum_sq_diff << endl;
@@ -112,17 +112,17 @@ double makeBoundedStep(vector<double> &iParams, vector<double> &steps)
   
 }
 
-void ParamSet::Explore(vector<double> &iParams, double llMin)
+void ParamSet::Explore(PGroup *pg)
 {
   double randstep;
-  cout << "Explore from " << llMin << endl;
+  cout << "Explore from " << pg->ll << endl;
 
-  for (int i=0; i<iParams.size(); i++) {
-     randstep = 0.1 * randprov->randUniformDouble();
-     iParams[i] += randstep;
-  }
+  // for (int i=0; i<iParams.size(); i++) {
+  //    randstep = 0.1 * randprov->randUniformDouble();
+  //    iParams[i] += randstep;
+  // }
 
-  cout << LogLikelihood(iParams) << endl;
+  // cout << LogLikelihood(iParams) << endl;
 }
 
 void ParamSet::dump()
@@ -148,6 +148,19 @@ PGroup::PGroup(int in_n_params, RandProvider *randprov)
 
 PGroup* ParamSet::find_worst()
 {
+  double ll_worst = pgroups[0].ll;
+  int i_worst = 0;
+
+  for (int i=0; i<pgroups.size(); i++) {
+    if (pgroups[i].ll < ll_worst) {
+      ll_worst = pgroups[i].ll;
+      i_worst = i;
+    }
+  }
+
+  cout << "Worst ll: " << ll_worst << " i_worst: " << i_worst << endl;
+
+  return &pgroups[i_worst];
 
 }
 

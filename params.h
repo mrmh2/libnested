@@ -59,7 +59,7 @@ public:
     double LogLikelihood(PGroup *pg);
     double LogLikelihood(vector<double> &uparams);
     double sigma = 0.5;
-    void Explore(vector<double> &uparams, double llMin);
+    void Explore(PGroup *pg);
     RandProvider *randprov;
     void dump();
   //  function<void (

@@ -194,9 +194,17 @@ void testpset()
 
   ps.dump();
 
-  vector<double> testparams = {0.5, 0.5};
-  double ll = ps.LogLikelihood(testparams);
-  ps.Explore(testparams, ll);
+  PGroup *pgw = ps.find_worst();
+
+  ps.Explore(pgw);
+
+  //cout << pg->ll << endl;
+
+  //pg->pvals[0] = 0.55555;
+
+  //vector<double> testparams = {0.5, 0.5};
+  //double ll = ps.LogLikelihood(testparams);
+  //ps.Explore(testparams, ll);
 
   
 
