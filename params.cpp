@@ -117,12 +117,23 @@ void ParamSet::Explore(PGroup *pg)
   double randstep;
   cout << "Explore from " << pg->ll << endl;
 
-  // for (int i=0; i<iParams.size(); i++) {
-  //    randstep = 0.1 * randprov->randUniformDouble();
-  //    iParams[i] += randstep;
-  // }
+  double llMin = pg->ll;
 
-  // cout << LogLikelihood(iParams) << endl;
+  // cout << pg->pvals[0] << endl;
+  // cout << pg->pinfers[0]->step_size << endl;
+
+  for (int i=0; i<pg->n_params; i++) {
+    randstep = pg->pinfers[i]->step_size * 2 * (randprov->randUniformDouble() - 0.5);
+    pg->pvals[i] += randstep;
+    if (pg->pvals[i] > 1 || pg->pvals[i] < 0) {
+      pg->pvals[i] = randprov->randUniformDouble();
+    }
+    cout << pg->pvals[i] << endl;
+     //      randstep = 0.1 * randprov->randUniformDouble();
+     //  iParams[i] += randstep;
+  }
+
+  cout << LogLikelihood(pg) << endl;
 }
 
 void ParamSet::dump()
